@@ -37,15 +37,6 @@ function JuUniversityResume({ data }: { data: ResumeData }) {
   const positions = populated(data.positions);
   const achievements = populated(data.achievements);
   const certifications = populated(data.certifications);
-  const contacts = [
-    p.phone,
-    p.email,
-    p.github,
-    p.website,
-    p.linkedin,
-    p.location,
-  
-  ].filter(Boolean);
 
   return (
     <article className="resume-print-page p-[10mm] text-[10.5px] leading-[1.28]">
@@ -93,14 +84,16 @@ function JuUniversityResume({ data }: { data: ResumeData }) {
         </div>
       </header>
 
-      {contacts.length > 0 && (
-        <div className="mt-4 grid grid-cols-3 gap-x-4 gap-y-1 border-y border-slate-300 py-2 text-[9.5px]">
-          {contacts.map((contact) => (
-            <span key={contact} className="break-all">
-              {contact}
-            </span>
-          ))}
-        </div>
+      <ContactLinks
+        personal={p}
+        className="mt-4 grid grid-cols-3 gap-x-4 gap-y-1 border-y border-slate-300 py-2 text-[9.5px]"
+        itemClassName="min-w-0"
+      />
+
+      {p.summary && (
+        <JuSection title="Professional Summary">
+          <p className="px-1 py-1 leading-relaxed">{p.summary}</p>
+        </JuSection>
       )}
 
       {education.length > 0 && (
@@ -160,9 +153,10 @@ function JuUniversityResume({ data }: { data: ResumeData }) {
                     )}
                   </p>
                   <BulletLines text={item.details} />
-                  {item.link && (
-                    <p className="mt-1 break-all text-[9px]">{item.link}</p>
-                  )}
+                  <ProjectLink
+                    link={item.link}
+                    className="mt-1 text-[9px]"
+                  />
                 </div>
                 <div className="p-2 text-right">
                   <p>{item.duration}</p>
@@ -263,37 +257,104 @@ function ModernAtsResume({ data }: { data: ResumeData }) {
   const experience = populated(data.experience);
   const projects = populated(data.projects);
   const skills = populated(data.skills);
+  const subjects = populated(data.subjects);
 
   return (
-    <article className="resume-print-page p-[14mm] text-[10.5px] leading-[1.45]">
-      <header className="border-b-2 border-slate-900 pb-4">
-        <div className="flex items-start justify-between gap-6">
-          <div>
-            <h1 className="text-[29px] font-black tracking-tight">
-              {p.fullName || "Your Name"}
-            </h1>
-            <p className="mt-1 font-bold text-slate-600">
-              {[p.degree, p.department].filter(Boolean).join(" · ")}
-            </p>
-          </div>
+    <article className="resume-print-page p-[12mm] text-[10px] leading-[1.42]">
+      <header className="border-b border-slate-900 pb-3 text-center">
+        <h1 className="text-[27px] font-black uppercase tracking-[0.035em]">
+          {p.fullName || "Your Name"}
+        </h1>
 
-          {p.photo && (
-            <img
-              src={p.photo}
-              alt="Candidate"
-              className="h-[82px] w-[64px] object-cover"
-            />
-          )}
-        </div>
+        {(p.degree || p.department) && (
+          <p className="mt-1 text-[11px] font-semibold text-slate-700">
+            {[p.degree, p.department].filter(Boolean).join(" · ")}
+          </p>
+        )}
 
-        <p className="mt-3 text-[9.5px] text-slate-600">
-          {[p.location, p.phone, p.email, p.linkedin, p.github, p.website]
-            .filter(Boolean)
-            .join("  |  ")}
-        </p>
+        {(p.university || p.rollNumber) && (
+          <p className="mt-0.5 text-[10px] text-slate-600">
+            {p.university}
+            {p.university && p.rollNumber ? " · " : ""}
+            {p.rollNumber ? `Roll No. ${p.rollNumber}` : ""}
+          </p>
+        )}
+
+        <ContactLinks
+          personal={p}
+          className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[9px]"
+          itemClassName="max-w-[62mm]"
+        />
       </header>
 
-     
+      {p.summary && (
+        <CleanSection title="Professional Summary">
+          <p>{p.summary}</p>
+        </CleanSection>
+      )}
+
+      {education.length > 0 && (
+        <CleanSection title="Education">
+          <div className="space-y-2.5">
+            {education.map((item) => (
+              <div key={item.id} className="flex justify-between gap-5">
+                <div className="min-w-0">
+                  <p className="font-bold">{item.institute}</p>
+                  <p className="text-slate-700">{item.degree}</p>
+                </div>
+                <div className="shrink-0 text-right text-[9.5px]">
+                  <p>{item.year}</p>
+                  <p className="text-slate-600">{item.score}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CleanSection>
+      )}
+
+      {subjects.length > 0 && (
+        <CleanSection title="Coursework / Skills">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+            {subjects.map((item) => (
+              <p key={item.id}>
+                <span className="font-bold">{item.subject}</span>
+                {item.topics && ` — ${item.topics}`}
+                {item.additionalInfo && ` — ${item.additionalInfo}`}
+              </p>
+            ))}
+          </div>
+        </CleanSection>
+      )}
+
+      {projects.length > 0 && (
+        <CleanSection title="Projects">
+          <div className="space-y-3">
+            {projects.map((item) => (
+              <div key={item.id}>
+                <div className="flex items-start justify-between gap-5">
+                  <div className="min-w-0">
+                    <p className="font-bold">
+                      {item.name}
+                      {item.technologies && (
+                        <span className="font-normal text-slate-600">
+                          {" "}
+                          | {item.technologies}
+                        </span>
+                      )}
+                    </p>
+                    <ProjectLink link={item.link} className="mt-0.5 text-[9px]" />
+                  </div>
+                  <div className="shrink-0 text-right text-[9px] text-slate-500">
+                    <p>{item.duration}</p>
+                    <p>{item.additionalInfo}</p>
+                  </div>
+                </div>
+                <BulletLines text={item.details} />
+              </div>
+            ))}
+          </div>
+        </CleanSection>
+      )}
 
       {experience.length > 0 && (
         <CleanSection title="Experience">
@@ -307,57 +368,12 @@ function ModernAtsResume({ data }: { data: ResumeData }) {
                       {item.organization}
                     </p>
                   </div>
-                  <div className="text-right text-[9.5px] text-slate-500">
+                  <div className="shrink-0 text-right text-[9.5px] text-slate-500">
                     <p>{item.duration}</p>
                     <p>{item.location}</p>
                   </div>
                 </div>
                 <BulletLines text={item.details} />
-              </div>
-            ))}
-          </div>
-        </CleanSection>
-      )}
-
-      {projects.length > 0 && (
-        <CleanSection title="Projects">
-          <div className="space-y-3">
-            {projects.map((item) => (
-              <div key={item.id}>
-                <div className="flex justify-between gap-5">
-                  <p className="font-bold">
-                    {item.name}
-                    {item.technologies && (
-                      <span className="font-normal text-slate-600">
-                        {" "}
-                        | {item.technologies}
-                      </span>
-                    )}
-                  </p>
-                  <p className="text-[9.5px] text-slate-500">
-                    {item.duration}
-                  </p>
-                </div>
-                <BulletLines text={item.details} />
-              </div>
-            ))}
-          </div>
-        </CleanSection>
-      )}
-
-      {education.length > 0 && (
-        <CleanSection title="Education">
-          <div className="space-y-2">
-            {education.map((item) => (
-              <div key={item.id} className="flex justify-between gap-5">
-                <div>
-                  <p className="font-bold">{item.degree}</p>
-                  <p className="text-slate-600">{item.institute}</p>
-                </div>
-                <div className="text-right">
-                  <p>{item.year}</p>
-                  <p className="text-slate-600">{item.score}</p>
-                </div>
               </div>
             ))}
           </div>
@@ -378,7 +394,7 @@ function ModernAtsResume({ data }: { data: ResumeData }) {
         </CleanSection>
       )}
 
-      <SecondarySections data={data} />
+      <SecondarySections data={data} hideSubjects />
     </article>
   );
 }
@@ -410,13 +426,24 @@ function TechnicalResume({ data }: { data: ResumeData }) {
           {[p.degree, p.department].filter(Boolean).join(" · ")}
         </p>
 
-        <div className="mt-7 space-y-2 break-all text-[9px] text-slate-300">
-          {[p.location, p.phone, p.email, p.linkedin, p.github, p.website]
-            .filter(Boolean)
-            .map((item) => (
-              <p key={item}>{item}</p>
-            ))}
-        </div>
+        {p.university && (
+          <p className="mt-1 text-[9px] font-semibold text-slate-200">
+            {p.university}
+          </p>
+        )}
+
+        {p.rollNumber && (
+          <p className="mt-1 text-[8.5px] text-slate-400">
+            Roll No. {p.rollNumber}
+          </p>
+        )}
+
+        <ContactLinks
+          personal={p}
+          dark
+          className="mt-7 space-y-2 text-[9px]"
+          itemClassName="w-full"
+        />
 
         {skills.length > 0 && (
           <div className="mt-8">
@@ -462,15 +489,21 @@ function TechnicalResume({ data }: { data: ResumeData }) {
               {projects.map((item) => (
                 <div key={item.id}>
                   <div className="flex justify-between gap-5">
-                    <p className="font-bold">
-                      {item.name}
-                      {item.technologies && (
-                        <span className="font-normal text-cyan-700">
-                          {" "}
-                          | {item.technologies}
-                        </span>
-                      )}
-                    </p>
+                    <div className="min-w-0">
+                      <p className="font-bold">
+                        {item.name}
+                        {item.technologies && (
+                          <span className="font-normal text-cyan-700">
+                            {" "}
+                            | {item.technologies}
+                          </span>
+                        )}
+                      </p>
+                      <ProjectLink
+                        link={item.link}
+                        className="mt-0.5 text-[8.5px] text-cyan-700"
+                      />
+                    </div>
                     <p className="text-[9px] text-slate-500">
                       {item.duration}
                     </p>
@@ -556,11 +589,17 @@ function ClassicResume({ data }: { data: ResumeData }) {
               .filter(Boolean)
               .join(" · ")}
           </p>
-          <p className="mx-auto mt-3 max-w-[145mm] text-[9px] text-slate-500">
-            {[p.location, p.phone, p.email, p.linkedin, p.github, p.website]
-              .filter(Boolean)
-              .join("  |  ")}
-          </p>
+
+          {p.rollNumber && (
+            <p className="mt-1 text-[9px] text-slate-500">
+              Roll No. {p.rollNumber}
+            </p>
+          )}
+
+          <ContactLinks
+            personal={p}
+            className="mx-auto mt-3 flex max-w-[160mm] flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[8.5px] text-slate-600"
+          />
         </header>
 
         {p.summary && (
@@ -619,6 +658,7 @@ function ClassicResume({ data }: { data: ResumeData }) {
                     {item.name}
                     {item.technologies && ` | ${item.technologies}`}
                   </p>
+                  <ProjectLink link={item.link} className="mt-0.5 text-[8.5px]" />
                   <BulletLines text={item.details} />
                 </div>
               ))}
@@ -645,12 +685,271 @@ function ClassicResume({ data }: { data: ResumeData }) {
   );
 }
 
+type ContactKind =
+  | "phone"
+  | "email"
+  | "linkedin"
+  | "github"
+  | "website"
+  | "location";
+
+type ContactEntry = {
+  kind: ContactKind;
+  label: string;
+  href?: string;
+  external?: boolean;
+};
+
+function ContactLinks({
+  personal,
+  className = "",
+  itemClassName = "",
+  dark = false,
+}: {
+  personal: ResumeData["personal"];
+  className?: string;
+  itemClassName?: string;
+  dark?: boolean;
+}) {
+  const entries = buildContactEntries(personal);
+
+  if (entries.length === 0) return null;
+
+  const colour = dark ? "text-slate-300" : "text-slate-700";
+
+  return (
+    <div className={className}>
+      {entries.map((entry) => {
+        const content = (
+          <>
+            <ContactIcon kind={entry.kind} />
+            <span className="min-w-0 break-all">{entry.label}</span>
+          </>
+        );
+
+        const sharedClassName = `inline-flex items-center gap-1.5 align-middle ${colour} ${itemClassName}`;
+
+        if (!entry.href) {
+          return (
+            <span key={entry.kind} className={sharedClassName}>
+              {content}
+            </span>
+          );
+        }
+
+        return (
+          <a
+            key={entry.kind}
+            href={entry.href}
+            target={entry.external ? "_blank" : undefined}
+            rel={entry.external ? "noreferrer noopener" : undefined}
+            className={`${sharedClassName} underline-offset-2 hover:underline`}
+          >
+            {content}
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
+function buildContactEntries(
+  personal: ResumeData["personal"],
+): ContactEntry[] {
+  const entries: ContactEntry[] = [];
+
+  if (personal.phone.trim()) {
+    entries.push({
+      kind: "phone",
+      label: personal.phone.trim(),
+      href: `tel:${personal.phone.replace(/[^\d+]/g, "")}`,
+    });
+  }
+
+  if (personal.email.trim()) {
+    entries.push({
+      kind: "email",
+      label: personal.email.trim(),
+      href: `mailto:${personal.email.trim()}`,
+    });
+  }
+
+  if (personal.linkedin.trim()) {
+    entries.push({
+      kind: "linkedin",
+      label: displayUrl(personal.linkedin),
+      href: socialUrl(personal.linkedin, "https://www.linkedin.com/in/"),
+      external: true,
+    });
+  }
+
+  if (personal.github.trim()) {
+    entries.push({
+      kind: "github",
+      label: displayUrl(personal.github),
+      href: socialUrl(personal.github, "https://github.com/"),
+      external: true,
+    });
+  }
+
+  if (personal.website.trim()) {
+    entries.push({
+      kind: "website",
+      label: displayUrl(personal.website),
+      href: externalUrl(personal.website),
+      external: true,
+    });
+  }
+
+  if (personal.location.trim()) {
+    entries.push({
+      kind: "location",
+      label: personal.location.trim(),
+    });
+  }
+
+  return entries;
+}
+
+function ProjectLink({
+  link,
+  className = "",
+}: {
+  link: string;
+  className?: string;
+}) {
+  if (!link.trim()) return null;
+
+  const github = /github\.com/i.test(link);
+  const href = externalUrl(link);
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer noopener"
+      className={`inline-flex items-center gap-1.5 break-all font-semibold text-slate-700 underline underline-offset-2 ${className}`}
+    >
+      <ContactIcon kind={github ? "github" : "website"} />
+      <span>{github ? "GitHub Repository" : displayUrl(link)}</span>
+    </a>
+  );
+}
+
+function externalUrl(value: string) {
+  const trimmed = value.trim();
+
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+
+  return `https://${trimmed.replace(/^\/+/, "")}`;
+}
+
+function socialUrl(value: string, base: string) {
+  const trimmed = value.trim();
+
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+
+  if (/^(www\.)?(linkedin\.com|github\.com)\//i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+
+  return `${base}${trimmed.replace(/^@/, "").replace(/^\/+/, "")}`;
+}
+
+function displayUrl(value: string) {
+  return value
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/\/$/, "");
+}
+
+function ContactIcon({ kind }: { kind: ContactKind }) {
+  const common = {
+    width: 11,
+    height: 11,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.9,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+    className: "shrink-0",
+  };
+
+  if (kind === "linkedin") {
+    return (
+      <svg
+        width="11"
+        height="11"
+        viewBox="0 0 448 512"
+        fill="currentColor"
+        aria-hidden="true"
+        className="shrink-0"
+      >
+        <path d="M100.3 448H7.4V148.9h92.9V448zM53.8 108.1C24.1 108.1 0 84 0 54.3 0 24.1 24.1 0 53.8 0s53.8 24.1 53.8 54.3c0 29.7-24.1 53.8-53.8 53.8zM448 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.8-48.3 94 0 111.3 61.9 111.3 142.3V448z" />
+      </svg>
+    );
+  }
+
+  if (kind === "github") {
+    return (
+      <svg
+        width="11"
+        height="11"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+        className="shrink-0"
+      >
+        <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.17c-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18A11 11 0 0 1 12 6c.98 0 1.95.13 2.86.38 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.27 5.68.41.36.78 1.07.78 2.16v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z" />
+      </svg>
+    );
+  }
+
+  if (kind === "phone") {
+    return (
+      <svg {...common}>
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.8a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.28-1.28a2 2 0 0 1 2.11-.45c.9.33 1.84.56 2.8.69A2 2 0 0 1 22 16.92z" />
+      </svg>
+    );
+  }
+
+  if (kind === "email") {
+    return (
+      <svg {...common}>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m3 7 9 6 9-6" />
+      </svg>
+    );
+  }
+
+  if (kind === "website") {
+    return (
+      <svg {...common}>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </svg>
+  );
+}
+
 function SecondarySections({
   data,
   technical = false,
+  hideSubjects = false,
 }: {
   data: ResumeData;
   technical?: boolean;
+  hideSubjects?: boolean;
 }) {
   const Section = technical ? TechSection : CleanSection;
   const subjects = populated(data.subjects);
@@ -660,7 +959,7 @@ function SecondarySections({
 
   return (
     <>
-      {subjects.length > 0 && (
+      {!hideSubjects && subjects.length > 0 && (
         <Section title="Subjects of Interest">
           <div className="space-y-1">
             {subjects.map((item) => (
