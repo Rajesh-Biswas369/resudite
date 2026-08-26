@@ -76,6 +76,9 @@ button {
 .resume-print-page > div > section {
   break-inside: avoid;
   page-break-inside: avoid;
+  /* Adds a gap at the top of the page when a section breaks to a new page */
+  border-top: 8mm solid transparent;
+  margin-top: -8mm;
 }
 
 /* For JuUniversityResume grid rows (which use FragmentRow and grid layouts) */
