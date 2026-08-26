@@ -65,19 +65,10 @@ function JuUniversityResume({ data }: { data: ResumeData }) {
           )}
         </div>
 
-        <div className="flex flex-col items-end pt-1 text-[11px] text-slate-600 space-y-0.5">
-          {p.phone && <div>{p.phone.trim()}</div>}
-          {p.email && <div>{p.email.trim()}</div>}
-          {(p.github || p.website) && (
-            <div>
-              {[p.github ? displayUrl(p.github) : "", p.website ? displayUrl(p.website) : ""]
-                .filter(Boolean)
-                .join(" | ")}
-            </div>
-          )}
-          {p.linkedin && <div>{displayUrl(p.linkedin)}</div>}
-          {p.location && <div>{p.location.trim()}</div>}
-        </div>
+        <ContactLinks
+          personal={p}
+          className="flex flex-col items-end pt-1 text-[11px] text-slate-600 space-y-1"
+        />
       </header>
 
       {p.summary && (
