@@ -260,12 +260,7 @@ function PersonalEditor({
 
       <div className="space-y-5 p-5 sm:p-6">
         <div className="grid gap-4 sm:grid-cols-2">
-          <FileField
-            label="Candidate photo"
-            preview={p.photo}
-            onChange={(file) => onImage("photo", file)}
-            onClear={() => onChange("photo", "")}
-          />
+          
           <FileField
             label="Institution logo"
             preview={p.logo}

@@ -40,24 +40,14 @@ function JuUniversityResume({ data }: { data: ResumeData }) {
 
   return (
     <article className="resume-print-page p-[10mm] text-[10.5px] leading-[1.28]">
-      <header className="grid grid-cols-[82px_1fr_90px] items-start gap-4">
-        <div
-  className={`flex h-[78px] w-[78px] items-center justify-center overflow-hidden ${
-    p.logo
-      ? "border-0"
-      : "rounded-full border-[3px] border-red-600 text-xl font-black text-red-600"
-  }`}
->
-  {p.logo ? (
-    <img
-      src={p.logo}
-      alt="Institution logo"
-      className="h-full w-full object-contain"
-    />
-  ) : (
-    "JU"
-  )}
-</div>
+      <header className="grid grid-cols-[82px_1fr_auto] items-start gap-4 pb-3 border-b border-slate-300 mb-3">
+        <div className="flex h-[78px] w-[78px] items-center justify-center overflow-hidden">
+          <img
+            src="/ju-logo/logo.png"
+            alt="Jadavpur University logo"
+            className="h-full w-full object-contain"
+          />
+        </div>
         <div className="pt-1">
           <h1 className="text-[27px] font-black leading-none text-slate-700">
             {p.fullName || "Your Name"}
@@ -75,20 +65,20 @@ function JuUniversityResume({ data }: { data: ResumeData }) {
           )}
         </div>
 
-        <div className="flex h-[112px] w-[84px] items-center justify-center overflow-hidden border border-dashed border-slate-400 bg-slate-100 text-[9px] font-bold text-slate-400">
-          {p.photo ? (
-            <img src={p.photo} alt="Candidate" className="h-full w-full object-cover" />
-          ) : (
-            "PHOTO"
+        <div className="flex flex-col items-end pt-1 text-[11px] text-slate-600 space-y-0.5">
+          {p.phone && <div>{p.phone.trim()}</div>}
+          {p.email && <div>{p.email.trim()}</div>}
+          {(p.github || p.website) && (
+            <div>
+              {[p.github ? displayUrl(p.github) : "", p.website ? displayUrl(p.website) : ""]
+                .filter(Boolean)
+                .join(" | ")}
+            </div>
           )}
+          {p.linkedin && <div>{displayUrl(p.linkedin)}</div>}
+          {p.location && <div>{p.location.trim()}</div>}
         </div>
       </header>
-
-      <ContactLinks
-        personal={p}
-        className="mt-4 grid grid-cols-3 gap-x-4 gap-y-1 border-y border-slate-300 py-2 text-[9.5px]"
-        itemClassName="min-w-0"
-      />
 
       {p.summary && (
         <JuSection title="Professional Summary">
