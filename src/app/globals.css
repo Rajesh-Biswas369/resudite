@@ -70,6 +70,20 @@ button {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.resume-print-page section,
+.resume-print-page article > div > section,
+.resume-print-page article > main > section,
+.resume-print-page > div > section {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* For JuUniversityResume grid rows (which use FragmentRow and grid layouts) */
+.resume-print-page .grid {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

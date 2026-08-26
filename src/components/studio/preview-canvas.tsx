@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MIN_ZOOM = 0.45;
 const MAX_ZOOM = 1.6;
@@ -17,6 +17,7 @@ export function PreviewCanvas({
   children: React.ReactNode;
 }) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const dragState = useRef({
     active: false,
@@ -28,6 +29,22 @@ export function PreviewCanvas({
 
   const [zoom, setZoom] = useState(0.75);
   const [dragging, setDragging] = useState(false);
+  const [pages, setPages] = useState(1);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver(() => {
+      // contentRef wraps the resume, so its scrollHeight tells us the true content height
+      const height = el.scrollHeight;
+      setPages(Math.max(1, Math.ceil(height / A4_HEIGHT)));
+    });
+
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, []);
 
   function changeZoom(nextZoom: number) {
     setZoom(clamp(nextZoom));
@@ -166,19 +183,34 @@ export function PreviewCanvas({
           className="relative mx-auto"
           style={{
             width: A4_WIDTH * zoom,
-            height: A4_HEIGHT * zoom,
+            height: pages * A4_HEIGHT * zoom,
           }}
         >
           <div
-            className="absolute left-0 top-0 overflow-hidden shadow-[0_35px_120px_rgba(0,0,0,0.55)]"
+            className="absolute left-0 top-0 overflow-hidden shadow-[0_35px_120px_rgba(0,0,0,0.55)] bg-white"
             style={{
               width: A4_WIDTH,
-              minHeight: A4_HEIGHT,
+              height: pages * A4_HEIGHT,
               transform: `scale(${zoom})`,
               transformOrigin: "top left",
             }}
           >
-            {children}
+            <div ref={contentRef} className="w-full h-full absolute left-0 top-0">
+              {children}
+            </div>
+
+            {/* Render exact page dividers so the user can see where the pages split */}
+            {pages > 1 &&
+              Array.from({ length: pages - 1 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute left-0 w-full flex flex-col items-center justify-center pointer-events-none z-10"
+                  style={{ top: (i + 1) * A4_HEIGHT - 2 }}
+                >
+                  {/* Subtle dark line showing the actual print break */}
+                  <div className="w-full h-[4px] bg-slate-900/40 shadow-sm" />
+                </div>
+              ))}
           </div>
         </div>
       </div>
