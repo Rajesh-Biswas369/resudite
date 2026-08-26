@@ -389,7 +389,7 @@ function TechnicalResume({ data }: { data: ResumeData }) {
   const certifications = populated(data.certifications);
 
   return (
-    <article className="resume-print-page grid grid-cols-[60mm_1fr] overflow-hidden">
+    <article className="resume-print-page grid grid-cols-[60mm_1fr] overflow-hidden print:overflow-visible">
       <aside className="bg-slate-900 p-[10mm] text-white">
         {p.photo && (
           <img

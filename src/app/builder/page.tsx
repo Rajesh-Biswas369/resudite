@@ -119,7 +119,7 @@ export default function BuilderPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+    <main className="relative min-h-screen overflow-hidden print:overflow-visible bg-slate-950 text-white">
       <DigitalBackground />
 
       <div className="relative z-10">

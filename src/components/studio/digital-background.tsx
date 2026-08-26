@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 
 export function DigitalBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 overflow-hidden print:hidden">
       <div
         className="absolute inset-0 opacity-[0.16]"
         style={{
