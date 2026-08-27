@@ -154,3 +154,18 @@ export function duplicateResumeProject(project: ResumeProject): ResumeProject {
   persistProject(copy);
   return copy;
 }
+
+export function renameResumeProject(projectId: string, newName: string): ResumeProject | null {
+  const projects = readProjects();
+  const project = projects.find((p) => p.id === projectId);
+  if (!project) return null;
+
+  const updated: ResumeProject = {
+    ...project,
+    name: newName.trim(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  persistProject(updated);
+  return updated;
+}

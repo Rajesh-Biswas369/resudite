@@ -10,6 +10,7 @@ import {
   deleteResumeProject,
   duplicateResumeProject,
   readProjects,
+  renameResumeProject,
   setActiveProject,
 } from "@/lib/resume-storage";
 import {
@@ -45,6 +46,14 @@ export default function ProjectsPage() {
 
   function copyProject(project: ResumeProject) {
     duplicateResumeProject(project);
+    setProjects(readProjects());
+  }
+
+  function renameProject(project: ResumeProject) {
+    const newName = window.prompt("Enter new project name:", project.name);
+    if (!newName || newName.trim() === project.name) return;
+
+    renameResumeProject(project.id, newName);
     setProjects(readProjects());
   }
 
@@ -117,8 +126,24 @@ export default function ProjectsPage() {
                 className="group rounded-[1.7rem] border border-white/10 bg-white/[0.05] p-6 shadow-[0_25px_90px_rgba(0,0,0,0.28)] backdrop-blur-2xl transition hover:border-cyan-300/20"
               >
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 font-black text-cyan-300">
-                    R
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 font-black text-cyan-300">
+                      R
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        renameProject(project);
+                      }}
+                      title="Rename project"
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.05] text-slate-400 transition hover:bg-white/10 hover:text-white"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                      </svg>
+                    </button>
                   </div>
 
                   <div className="flex items-center gap-2">
