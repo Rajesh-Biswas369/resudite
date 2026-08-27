@@ -119,10 +119,10 @@ export default function BuilderPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden print:overflow-visible bg-slate-950 text-white">
+    <main className="relative print:static min-h-screen overflow-hidden print:overflow-visible bg-slate-950 text-white">
       <DigitalBackground />
 
-      <div className="relative z-10">
+      <div className="relative z-10 print:static print:z-auto">
         <header className="no-print sticky top-0 z-40 border-b border-white/10 bg-slate-950/80 backdrop-blur-2xl">
           <div className="mx-auto flex min-h-20 max-w-[1800px] flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6">
             <ResuditeBrand

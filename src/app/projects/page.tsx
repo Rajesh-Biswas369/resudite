@@ -8,6 +8,7 @@ import { DigitalBackground } from "@/components/studio/digital-background";
 import { ResuditeBrand } from "@/components/studio/resudite-brand";
 import {
   deleteResumeProject,
+  duplicateResumeProject,
   readProjects,
   setActiveProject,
 } from "@/lib/resume-storage";
@@ -39,6 +40,11 @@ export default function ProjectsPage() {
     if (!confirmed) return;
 
     deleteResumeProject(project.id);
+    setProjects(readProjects());
+  }
+
+  function copyProject(project: ResumeProject) {
+    duplicateResumeProject(project);
     setProjects(readProjects());
   }
 
@@ -115,11 +121,28 @@ export default function ProjectsPage() {
                     R
                   </div>
 
-                  <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
-                    {project.templateId
-                      ? templateNames[project.templateId]
-                      : "Template pending"}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
+                      {project.templateId
+                        ? templateNames[project.templateId]
+                        : "Template pending"}
+                    </span>
+                    
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyProject(project);
+                      }}
+                      title="Duplicate project"
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.05] text-slate-400 transition hover:bg-white/10 hover:text-white"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
                 <h2 className="mt-6 text-xl font-black">{project.name}</h2>

@@ -139,3 +139,18 @@ export function deleteResumeProject(projectId: string) {
     localStorage.removeItem(ACTIVE_PROJECT_KEY);
   }
 }
+
+export function duplicateResumeProject(project: ResumeProject): ResumeProject {
+  const now = new Date().toISOString();
+
+  const copy: ResumeProject = {
+    ...project,
+    id: createId("resume"),
+    name: `${project.name} (Copy)`,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  persistProject(copy);
+  return copy;
+}
